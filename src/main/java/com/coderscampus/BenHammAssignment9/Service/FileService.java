@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVFormat.Builder;
@@ -16,26 +17,20 @@ import com.coderscampus.BenHammAssignment9.Domain.Recipe;
 @Component
 public class FileService {
 
-
-//	@Autowired
-	//private Recipe recipe;
-	
 	List<Recipe> recipiesList = new ArrayList<>();
 
 	public List<Recipe> getRecipies(String fileName) throws IOException {
-		
+
 		Reader in = new FileReader(fileName);
 		Builder builder = CSVFormat.DEFAULT.builder().setEscape('\\').setIgnoreSurroundingSpaces(true)
 				.setHeader(Headers.class);
-		
-		
+
 		List<CSVRecord> records = builder.build().parse(in).getRecords();
 		for (CSVRecord record : records) {
-			//ApplicationContext context = new AnnotationConfigApplicationContext(BHA9Config.class);
-			//Recipe recipe =context.getBean(Recipe.class);
+
 			Recipe recipe = new Recipe();
 			if (record.getRecordNumber() != 1) {
-				//Recipe recipe = applicationContext.getBean(Recipe.class);
+
 				Integer cookingMinutes = Integer.parseInt(record.get(Headers.CookingMinutes));
 				Boolean dairyFree = Boolean.valueOf(record.get(Headers.DairyFree));
 				Boolean glutenFree = Boolean.valueOf(record.get(Headers.GlutenFree));
@@ -75,5 +70,42 @@ public class FileService {
 	enum Headers {
 		CookingMinutes, DairyFree, GlutenFree, Instructions, PreparationMinutes, PricePerServing, ReadyInMinutes,
 		Servings, SpoonacularScore, Title, Vegan, Vegetarian
+	}
+
+	public List<Recipe> createGlutenList() throws IOException {
+		FileService fileService = new FileService();
+		List<Recipe> glutenFree = fileService.getRecipies("recipes.txt").stream().distinct()
+				.filter(x -> x.getGlutenFree()).collect(Collectors.toList());
+		return glutenFree;
+
+	}
+
+	public List<Recipe> createVeggieList() throws IOException {
+		FileService fileService = new FileService();
+		List<Recipe> vegetarian = fileService.getRecipies("recipes.txt").stream().filter(x -> x.getVegetarian())
+				.collect(Collectors.toList());
+		return vegetarian;
+
+	}
+
+	public List<Recipe> createVeganList() throws IOException {
+		FileService fileService = new FileService();
+		List<Recipe> vegan = fileService.getRecipies("recipes.txt").stream().distinct().filter(x -> x.getVegan())
+				.collect(Collectors.toList());
+		return vegan;
+
+	}
+
+	public List<Recipe> createVeggieVeganList() throws IOException {
+		FileService fileService = new FileService();
+		List<Recipe> vAndGFree = fileService.getRecipies("recipes.txt").stream().filter(x -> x.getGlutenFree())
+				.filter(y -> y.getVegan()).collect(Collectors.toList());
+		return vAndGFree;
+	}
+
+	public List<Recipe> createAllList() throws IOException {
+		FileService fileService = new FileService();
+		List<Recipe> recipiesList = fileService.getRecipies("recipes.txt");
+		return recipiesList;
 	}
 }
