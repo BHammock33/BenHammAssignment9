@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVFormat.Builder;
@@ -72,40 +71,5 @@ public class FileService {
 		Servings, SpoonacularScore, Title, Vegan, Vegetarian
 	}
 
-	public List<Recipe> createGlutenList() throws IOException {
-		FileService fileService = new FileService();
-		List<Recipe> glutenFree = fileService.getRecipies("recipes.txt").stream().distinct()
-				.filter(x -> x.getGlutenFree()).collect(Collectors.toList());
-		return glutenFree;
-
-	}
-
-	public List<Recipe> createVeggieList() throws IOException {
-		FileService fileService = new FileService();
-		List<Recipe> vegetarian = fileService.getRecipies("recipes.txt").stream().filter(x -> x.getVegetarian())
-				.collect(Collectors.toList());
-		return vegetarian;
-
-	}
-
-	public List<Recipe> createVeganList() throws IOException {
-		FileService fileService = new FileService();
-		List<Recipe> vegan = fileService.getRecipies("recipes.txt").stream().distinct().filter(x -> x.getVegan())
-				.collect(Collectors.toList());
-		return vegan;
-
-	}
-
-	public List<Recipe> createVeggieVeganList() throws IOException {
-		FileService fileService = new FileService();
-		List<Recipe> vAndGFree = fileService.getRecipies("recipes.txt").stream().filter(x -> x.getGlutenFree())
-				.filter(y -> y.getVegan()).collect(Collectors.toList());
-		return vAndGFree;
-	}
-
-	public List<Recipe> createAllList() throws IOException {
-		FileService fileService = new FileService();
-		List<Recipe> recipiesList = fileService.getRecipies("recipes.txt");
-		return recipiesList;
-	}
+	
 }
